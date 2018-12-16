@@ -1,5 +1,7 @@
 #include "concordance.h"
 
+using namespace std;
+
 Concordance::Concordance(std::string filename)
 {
     m_filename = filename;
@@ -8,26 +10,26 @@ Concordance::Concordance(std::string filename)
 
 void Concordance::parse()
 {
-    std::ifstream file(m_file.c_str());
+    std::ifstream file(m_filename.c_str());
     while(!file.eof())
     {
         std::string word = next_word(file);
         add_word(word, m_line);
     }
 }
-
+//This function reads the entire text file and places new words into a vector. This function will also keep track of the lines that a repeated word is on. 
 void Concordance::add_word(string word, int line)
 {
-    int found_index = -1;
+    int find_index = -1;
     for(int i = 0; i < m_word_stats.size();++i)
     {
         if(m_word_stats[i].get_word() == word)
             {
-                found_index = i;
+                find_index = i;
                 break;
             }
     }            
-    if(found_index == -1)
+    if(find_index == -1)
     {
         Word w(word);
         w.add_line(line);
@@ -35,8 +37,8 @@ void Concordance::add_word(string word, int line)
     }
     else
     {
-        m_word_stats[found_index].add_count(1);
-        m_word_stats[found_index].add_line(line);
+        m_word_stats[find_index].add_count(1);
+        m_word_stats[find_index].add_line(line);
     }
 }
 
@@ -53,7 +55,7 @@ bool Concordance::is_punctuation(char c)
 }
 
 //This function ignores whitespaces.
-void Concordance::eat_whitespace(std::ifstream& input)
+void Concordance::eat_whitespace(std::ifstream &input)
 {
     for(;;)
     {
@@ -72,7 +74,7 @@ void Concordance::eat_whitespace(std::ifstream& input)
 }
 
 //This function ignores punctuation
-void Concordance::eat_punctuation(std::ifstream& input)
+void Concordance::eat_punctuation(std::ifstream &input)
 {
     for(;;)
     {
@@ -89,7 +91,7 @@ void Concordance::eat_punctuation(std::ifstream& input)
 }
 
 //This function goes to each word and makes it lowercase. 
-std::string Concordance::next_word(std::ifstream& input)
+std::string Concordance::next_word(std::ifstream &input)
 {
     std::string word;
     for(;;)
@@ -102,7 +104,7 @@ std::string Concordance::next_word(std::ifstream& input)
         {
             word += tolower(c);
         }
-        else if(is_whitespace(s))
+        else if(is_whitespace(c))
         {
             eat_whitespace(input);
             break;
